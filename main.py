@@ -41,9 +41,8 @@ def save_progress(progress):
         json.dump(progress, f, ensure_ascii=False, indent=2)
 
 
-def pick_questions(progress, how_many=10):
-    """Sentences in a low box (weak) are picked more often."""
-    pool = list(SENTENCES)
+def pick_questions(progress, pool, how_many=10):
+    pool = list(pool)
     chosen = []
     while pool and len(chosen) < how_many:
         weights = [6 - progress["boxes"].get(s[1], 1) for s in pool]
@@ -52,13 +51,22 @@ def pick_questions(progress, how_many=10):
         pool.remove(pick)
     return chosen
 
+def choose_pool(progress):
+    print("1 = gemischte Runde")
+    print("2 = nur meine schwächste Kategorie")
+    choice = input("Wahl: ").strip()
+    if choice == "2" and progress["mistakes"]:
+        weakest = max(progress["mistakes"], key=progress["mistakes"].get)
+        print(f"Schwächste Kategorie: {weakest}\n")
+        return [s for s in SENTENCES if s[2] == weakest]
+    return list(SENTENCES)
+
 
 def main():
     progress = load_progress()
     print("=== Satzbau Trainer ===")
     print("Translate into German. You can type ae/oe/ue instead of ä/ö/ü.\n")
-
-    questions = pick_questions(progress)
+    questions = pick_questions(progress, choose_pool(progress))
     score = 0
 
     for number, (english, german, category) in enumerate(questions, start=1):
