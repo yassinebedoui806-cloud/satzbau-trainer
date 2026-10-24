@@ -3,26 +3,19 @@ import os
 import random
 import re 
 # (English, German, category)
-SENTENCES = [
-    ("I'm waiting for the bus.", "Ich warte auf den Bus.", "verb+praeposition"),
-    ("She is waiting for her friend.", "Sie wartet auf ihre Freundin.", "verb+praeposition"),
-    ("I can't solve this problem.", "Ich kann dieses Problem nicht lösen.", "modalverb"),
-    ("He can't solve the task.", "Er kann die Aufgabe nicht lösen.", "modalverb"),
-    ("Could you help me, please? (formal)", "Könnten Sie mir bitte helfen?", "konjunktiv2"),
-    ("Could you open the window? (informal)", "Könntest du das Fenster öffnen?", "konjunktiv2"),
-    ("The man whose car is red lives here.", "Der Mann, dessen Auto rot ist, wohnt hier.", "relativsatz"),
-    ("The woman whose son studies in Berlin is my neighbour.", "Die Frau, deren Sohn in Berlin studiert, ist meine Nachbarin.", "relativsatz"),
-    ("I'm giving my brother a book as a present.", "Ich schenke meinem Bruder ein Buch.", "kasus"),
-    ("She gives her mother flowers as a present.", "Sie schenkt ihrer Mutter Blumen.", "kasus"),
-    ("I forgot to call him.", "Ich habe vergessen, ihn anzurufen.", "infinitiv+zu"),
-    ("Don't forget to close the door.", "Vergiss nicht, die Tür zuzumachen.", "infinitiv+zu"),
-    ("The project is supported by the city.", "Das Projekt wird von der Stadt befürwortet.", "passiv"),
-    ("That can be determined easily.", "Das lässt sich leicht feststellen.", "passiv"),
-    ("The problem can be solved.", "Das Problem lässt sich lösen.", "passiv"),
-    ("The book I'm interested in is expensive.", "Das Buch, für das ich mich interessiere, ist teuer.", "relativsatz"),
-    ("The topic I'm talking about is important.", "Das Thema, über das ich spreche, ist wichtig.", "relativsatz"),
-    ("My studies are going well.", "Mein Studium läuft gut.", "wortschatz"),
-]
+def load_sentences():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saetze.txt")
+    sentences = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                english, german, category = [part.strip() for part in line.split("|")]
+                sentences.append((english, german, category))
+    return sentences
+
+
+SENTENCES = load_sentences()
 
 PROGRESS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "progress.json")
 
